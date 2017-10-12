@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 //import { Snackbar } from 'react-mdl';
+import firebase from 'firebase';
 
 import Navbar from './Navbar';
 import MessagesCardContainer from './MessagesCardContainer';
@@ -8,11 +9,10 @@ import MessageList from './MessageList';
 import MessageInputForm from './MessageInputForm';
 
 class App extends Component {
+  authRef = null;
+
   state = {
-    user: {
-      displayName: 'Alvaro Viebrantz',
-      photoURL: 'https://avatars0.githubusercontent.com/u/1615543?v=4&s=460'
-    },
+    user: null,
     messages: {
       '-K2ib4H77rj0LYewF7dP': {
         text: 'Hello',
@@ -32,6 +32,25 @@ class App extends Component {
     }
   };
 
+  componentDidMount() {
+    this.authRef = firebase.auth().onAuthStateChanged(user => {
+      this.setState({ user });
+    });
+  }
+
+  componentWillUnmount() {
+    this.authRef && this.authRef();
+  }
+
+  onSignInPress() {
+    let provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider);
+  }
+
+  onSignOutPress() {
+    firebase.auth().signOut();
+  }
+
   render() {
     let { user, messages, form } = this.state;
 
@@ -39,8 +58,8 @@ class App extends Component {
       <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
         <Navbar
           user={user}
-          onSignInPress={() => {}}
-          onSignOutPress={() => {}}
+          onSignInPress={this.onSignInPress}
+          onSignOutPress={this.onSignOutPress}
         />
 
         <main className="mdl-layout__content mdl-color--grey-100">
