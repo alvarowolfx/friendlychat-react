@@ -76,7 +76,7 @@ main,
   opacity: 1;
 }
 .message-container .pic {
-  background-image: url('/images/profile_placeholder.png');
+  background-image: url('../images/profile_placeholder.png');
   background-repeat: no-repeat;
   width: 30px;
   height: 30px;

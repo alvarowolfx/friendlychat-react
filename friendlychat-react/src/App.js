@@ -48,9 +48,15 @@ class App extends Component {
             <MessageList messages={messages} />
             <MessageInputForm
               text={form.text}
-              onTextChange={text => {}}
-              onFileSelected={file => {}}
-              onSend={() => {}}
+              onTextChange={text => {
+                this.setState({ form: { text } });
+              }}
+              onFileSelected={file => {
+                console.log('File selected');
+              }}
+              onSend={() => {
+                console.log('Send');
+              }}
             />
           </MessagesCardContainer>
 
