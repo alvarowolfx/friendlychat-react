@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 export default class Navbar extends Component {
   renderUserContainer() {
-    let { user } = this.props;
+    let { user, onSignOutPress, onSignInPress } = this.props;
     if (user) {
       return (
         <div id="user-container">
@@ -16,6 +16,7 @@ export default class Navbar extends Component {
           <div id="user-name">{user.displayName}</div>
           <button
             id="sign-out"
+            onClick={onSignOutPress}
             className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white"
           >
             Sign-out
@@ -28,6 +29,7 @@ export default class Navbar extends Component {
       <div id="user-container">
         <button
           id="sign-in"
+          onClick={onSignInPress}
           className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white"
         >
           <i className="material-icons">account_circle</i>Sign-in with Google
@@ -56,5 +58,7 @@ Navbar.propTypes = {
   user: PropTypes.shape({
     displayName: PropTypes.string.isRequired,
     photoURL: PropTypes.string
-  })
+  }),
+  onSignInPress: PropTypes.func,
+  onSignOutPress: PropTypes.func
 };

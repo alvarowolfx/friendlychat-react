@@ -8,7 +8,7 @@ const MessagesCardContainer = ({ children }) => {
     >
       <div
         id="messages-card"
-        className="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop"
+        className="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop"
       >
         <div className="mdl-card__supporting-text mdl-color-text--grey-600">
           {children}

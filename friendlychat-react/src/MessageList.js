@@ -6,10 +6,10 @@ import Message from './Message';
 const MessageList = ({ messages }) => {
   return (
     <div id="messages">
+      <span id="message-filler" />
       {Object.keys(messages).map(key => (
         <Message key={key} message={messages[key]} />
       ))}
-      <span id="message-filler" />
     </div>
   );
 };
