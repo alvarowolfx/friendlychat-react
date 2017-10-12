@@ -25,9 +25,17 @@ class App extends Component {
   componentDidMount() {
     this.authRef = firebase.auth().onAuthStateChanged(user => {
       this.setState({ user });
+      this.loadMessages();
     });
+  }
 
+  loadMessages() {
     let db = firebase.database();
+
+    if (this.messagesRef) {
+      this.messagesRef.off();
+    }
+
     this.messagesRef = db.ref('/messages');
 
     this.messagesRef.limitToLast(50).on('value', snapshot => {
@@ -41,8 +49,8 @@ class App extends Component {
   }
 
   componentWillUnmount() {
-    this.authRef && this.authRef();
-    this.messagesRef && this.messagesRef();
+    this.authRef && this.authRef.off();
+    this.messagesRef && this.messagesRef.off();
   }
 
   onSignInPress() {
@@ -68,7 +76,6 @@ class App extends Component {
     }
 
     let { user } = this.state;
-    console.log(file);
 
     this.messagesRef
       .push({
