@@ -8,6 +8,8 @@ import MessagesCardContainer from './MessagesCardContainer';
 import MessageList from './MessageList';
 import MessageInputForm from './MessageInputForm';
 
+const LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif';
+
 class App extends Component {
   authRef = null;
   messagesRef = null;
@@ -52,10 +54,44 @@ class App extends Component {
     firebase.auth().signOut();
   }
 
+  checkUser() {
+    if (!this.state.user) {
+      alert('You must be logged in');
+      return false;
+    }
+    return true;
+  }
+
+  onFileSelected(file) {
+    if (!this.checkUser()) {
+      return;
+    }
+
+    let { user } = this.state;
+    console.log(file);
+
+    this.messagesRef
+      .push({
+        name: user.displayName,
+        imageUrl: LOADING_IMAGE_URL,
+        photoUrl: user.photoURL
+      })
+      .then(message => {
+        let storage = firebase.storage();
+        let filePath = user.uid + '/' + message.key + '/' + file.name;
+        return storage
+          .ref(filePath)
+          .put(file)
+          .then(snapshot => {
+            let imageUrl = snapshot.downloadURL;
+            return message.update({ imageUrl });
+          });
+      });
+  }
+
   sendMessage() {
     let { form, user } = this.state;
-    if (!user) {
-      alert('You must be logged in');
+    if (!this.checkUser()) {
       return;
     }
 
@@ -95,9 +131,7 @@ class App extends Component {
               onTextChange={text => {
                 this.setState({ form: { text } });
               }}
-              onFileSelected={file => {
-                console.log('File selected');
-              }}
+              onFileSelected={this.onFileSelected.bind(this)}
               onSend={() => this.sendMessage()}
             />
           </MessagesCardContainer>

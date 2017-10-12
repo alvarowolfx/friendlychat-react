@@ -17,6 +17,8 @@ export default class MessageInputForm extends Component {
     this.imageForm.reset();
 
     let { onFileSelected } = this.props;
+
+    onFileSelected && onFileSelected(file);
   }
 
   onMessageSubmit(e) {
@@ -31,7 +33,7 @@ export default class MessageInputForm extends Component {
   }
 
   render() {
-    let { text, onFileSelected, onTextChange } = this.props;
+    let { text, onTextChange } = this.props;
     return (
       <div>
         <form id="message-form" onSubmit={this.onMessageSubmit.bind(this)}>
