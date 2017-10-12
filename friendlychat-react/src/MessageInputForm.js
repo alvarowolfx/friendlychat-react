@@ -19,12 +19,22 @@ export default class MessageInputForm extends Component {
     let { onFileSelected } = this.props;
   }
 
+  onMessageSubmit(e) {
+    e.preventDefault();
+
+    let { onSend } = this.props;
+    this.isSendEnabled() && onSend();
+  }
+
+  isSendEnabled() {
+    return !!this.props.text;
+  }
+
   render() {
-    let { text, onFileSelected, onSend, onTextChange } = this.props;
-    let enabledSend = !!text;
+    let { text, onFileSelected, onTextChange } = this.props;
     return (
       <div>
-        <form id="message-form" onSubmit={e => enabledSend && onSend()}>
+        <form id="message-form" onSubmit={this.onMessageSubmit.bind(this)}>
           <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input
               className="mdl-textfield__input"
@@ -39,7 +49,7 @@ export default class MessageInputForm extends Component {
           </div>
           <button
             id="submit"
-            disabled={!enabledSend}
+            disabled={!this.isSendEnabled()}
             type="submit"
             className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
           >

@@ -10,23 +10,11 @@ import MessageInputForm from './MessageInputForm';
 
 class App extends Component {
   authRef = null;
+  messagesRef = null;
 
   state = {
     user: null,
-    messages: {
-      '-K2ib4H77rj0LYewF7dP': {
-        text: 'Hello',
-        name: 'anonymous'
-      },
-      '-K2ib5JHRbbL0NrztUfO': {
-        text: 'How are you',
-        name: 'anonymous'
-      },
-      '-K2ib62mjHh34CAUbide': {
-        text: 'I am fine',
-        name: 'anonymous'
-      }
-    },
+    messages: {},
     form: {
       text: ''
     }
@@ -36,10 +24,23 @@ class App extends Component {
     this.authRef = firebase.auth().onAuthStateChanged(user => {
       this.setState({ user });
     });
+
+    let db = firebase.database();
+    this.messagesRef = db.ref('/messages');
+
+    this.messagesRef.limitToLast(50).on('value', snapshot => {
+      let messages = snapshot.val();
+      if (messages) {
+        this.setState({
+          messages
+        });
+      }
+    });
   }
 
   componentWillUnmount() {
     this.authRef && this.authRef();
+    this.messagesRef && this.messagesRef();
   }
 
   onSignInPress() {
@@ -49,6 +50,30 @@ class App extends Component {
 
   onSignOutPress() {
     firebase.auth().signOut();
+  }
+
+  sendMessage() {
+    let { form, user } = this.state;
+    if (!user) {
+      alert('You must be logged in');
+      return;
+    }
+
+    if (form.text) {
+      this.messagesRef
+        .push({
+          name: user.displayName,
+          text: form.text,
+          photoUrl: user.photoURL
+        })
+        .then(() => {
+          this.setState({
+            form: {
+              text: ''
+            }
+          });
+        });
+    }
   }
 
   render() {
@@ -73,9 +98,7 @@ class App extends Component {
               onFileSelected={file => {
                 console.log('File selected');
               }}
-              onSend={() => {
-                console.log('Send');
-              }}
+              onSend={() => this.sendMessage()}
             />
           </MessagesCardContainer>
 

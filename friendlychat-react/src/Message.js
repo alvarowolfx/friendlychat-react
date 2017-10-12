@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Message = ({ message: { text, name, picUrl } }) => {
+const Message = ({ message: { text, name, picUrl, photoUrl } }) => {
   return (
     <div className="message-container visible">
       <div className="spacing">
         <div
           className="pic"
-          style={{ backgroundImage: picUrl && `url(${picUrl})` }}
+          style={{ backgroundImage: photoUrl && `url(${photoUrl})` }}
         />
       </div>
       <div className="message">{text}</div>
