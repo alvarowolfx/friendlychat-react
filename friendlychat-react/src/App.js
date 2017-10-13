@@ -1,4 +1,6 @@
-import React, { Component } from 'react';
+import React, {
+  Component
+} from 'react';
 
 //import { Snackbar } from 'react-mdl';
 import firebase from 'firebase';
@@ -24,7 +26,9 @@ class App extends Component {
 
   componentDidMount() {
     this.authRef = firebase.auth().onAuthStateChanged(user => {
-      this.setState({ user });
+      this.setState({
+        user
+      });
       this.loadMessages();
     });
   }
@@ -70,82 +74,111 @@ class App extends Component {
     return true;
   }
 
-  onFileSelected(file) {
+  async onFileSelected(file) {
     if (!this.checkUser()) {
       return;
     }
 
-    let { user } = this.state;
+    let {
+      user
+    } = this.state;
 
-    this.messagesRef
+    let message = await this.messagesRef
       .push({
         name: user.displayName,
         imageUrl: LOADING_IMAGE_URL,
         photoUrl: user.photoURL
-      })
-      .then(message => {
-        let storage = firebase.storage();
-        let filePath = user.uid + '/' + message.key + '/' + file.name;
-        return storage
-          .ref(filePath)
-          .put(file)
-          .then(snapshot => {
-            let imageUrl = snapshot.downloadURL;
-            return message.update({ imageUrl });
-          });
       });
+    let storage = firebase.storage();
+    let filePath = user.uid + '/' + message.key + '/' + file.name;
+    let snapshot = await storage
+      .ref(filePath)
+      .put(file);
+
+    let imageUrl = snapshot.downloadURL;
+    message.update({
+      imageUrl
+    });
   }
 
-  sendMessage() {
-    let { form, user } = this.state;
+  async sendMessage() {
+    let {
+      form,
+      user
+    } = this.state;
     if (!this.checkUser()) {
       return;
     }
 
     if (form.text) {
-      this.messagesRef
+      await this.messagesRef
         .push({
           name: user.displayName,
           text: form.text,
           photoUrl: user.photoURL
         })
-        .then(() => {
-          this.setState({
-            form: {
-              text: ''
-            }
-          });
-        });
+      this.setState({
+        form: {
+          text: ''
+        }
+      });
     }
   }
 
   render() {
-    let { user, messages, form } = this.state;
+    let {
+      user,
+      messages,
+      form
+    } = this.state;
 
-    return (
-      <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
-        <Navbar
-          user={user}
-          onSignInPress={this.onSignInPress}
-          onSignOutPress={this.onSignOutPress}
-        />
+    return ( <
+      div className = "demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header" >
+      <
+      Navbar user = {
+        user
+      }
+      onSignInPress = {
+        this.onSignInPress
+      }
+      onSignOutPress = {
+        this.onSignOutPress
+      }
+      />
 
-        <main className="mdl-layout__content mdl-color--grey-100">
-          <MessagesCardContainer>
-            <MessageList messages={messages} />
-            <MessageInputForm
-              text={form.text}
-              onTextChange={text => {
-                this.setState({ form: { text } });
-              }}
-              onFileSelected={this.onFileSelected.bind(this)}
-              onSend={() => this.sendMessage()}
-            />
-          </MessagesCardContainer>
+      <
+      main className = "mdl-layout__content mdl-color--grey-100" >
+      <
+      MessagesCardContainer >
+      <
+      MessageList messages = {
+        messages
+      }
+      /> <
+      MessageInputForm text = {
+        form.text
+      }
+      onTextChange = {
+        text => {
+          this.setState({
+            form: {
+              text
+            }
+          });
+        }
+      }
+      onFileSelected = {
+        this.onFileSelected.bind(this)
+      }
+      onSend = {
+        () => this.sendMessage()
+      }
+      /> < /
+      MessagesCardContainer >
 
-          {/*<Snackbar active={} onTimeout={() => {}} />*/}
-        </main>
-      </div>
+      { /*<Snackbar active={} onTimeout={() => {}} />*/ } <
+      /main> < /
+      div >
     );
   }
 }
