@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-//import { Snackbar } from 'react-mdl';
 import firebase from 'firebase';
 
 import Navbar from './Navbar';
@@ -72,7 +71,7 @@ class App extends Component {
     return true;
   }
 
-  async onFileSelected(file) {
+  onFileSelected = async file => {
     if (!this.checkUser()) {
       return;
     }
@@ -92,9 +91,9 @@ class App extends Component {
     message.update({
       imageUrl
     });
-  }
+  };
 
-  async sendMessage() {
+  sendMessage = async () => {
     let { form, user } = this.state;
     if (!this.checkUser()) {
       return;
@@ -113,7 +112,15 @@ class App extends Component {
         }
       });
     }
-  }
+  };
+
+  onTextChange = text => {
+    this.setState({
+      form: {
+        text
+      }
+    });
+  };
 
   render() {
     let { user, messages, form } = this.state;
@@ -130,15 +137,9 @@ class App extends Component {
             <MessageList messages={messages} />
             <MessageInputForm
               text={form.text}
-              onTextChange={text => {
-                this.setState({
-                  form: {
-                    text
-                  }
-                });
-              }}
-              onFileSelected={this.onFileSelected.bind(this)}
-              onSend={() => this.sendMessage()}
+              onTextChange={this.onTextChange}
+              onFileSelected={this.onFileSelected}
+              onSend={this.sendMessage}
             />
           </MessagesCardContainer>
         </main>
