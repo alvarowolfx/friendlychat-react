@@ -1,21 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 const Message = ({
-  message: { text, name, imageUrl, photoUrl },
+  message: { text, name, imageUrl, photoUrl, moderated, sentiment },
   onImageLoaded
 }) => {
+  let sentimentClass = {};
+
+  if (sentiment) {
+    sentimentClass = {
+      bad: sentiment.score <= -0.25,
+      good: sentiment.score >= 0.25
+    };
+  }
+
   return (
     <div className="message-container visible">
       <div className="spacing">
         <div
           className="pic"
-          style={{ backgroundImage: photoUrl && `url(${photoUrl})` }}
+          style={{
+            backgroundImage: photoUrl && `url(${photoUrl})`
+          }}
         />
       </div>
-      <div className="message">
+      <div className={classNames('message', sentimentClass)}>
         {imageUrl ? (
-          <img src={imageUrl} alt="Attachment" onLoad={onImageLoaded} />
+          <img
+            src={`${imageUrl}${moderated ? '?moderated=1' : ''}`}
+            alt="Attachment"
+            onLoad={onImageLoaded}
+          />
         ) : (
           text
         )}

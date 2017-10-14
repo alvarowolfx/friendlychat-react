@@ -1,6 +1,4 @@
-import React, {
-  Component
-} from 'react';
+import React, { Component } from 'react';
 
 //import { Snackbar } from 'react-mdl';
 import firebase from 'firebase';
@@ -79,21 +77,16 @@ class App extends Component {
       return;
     }
 
-    let {
-      user
-    } = this.state;
+    let { user } = this.state;
 
-    let message = await this.messagesRef
-      .push({
-        name: user.displayName,
-        imageUrl: LOADING_IMAGE_URL,
-        photoUrl: user.photoURL
-      });
+    let message = await this.messagesRef.push({
+      name: user.displayName,
+      imageUrl: LOADING_IMAGE_URL,
+      photoUrl: user.photoURL
+    });
     let storage = firebase.storage();
     let filePath = user.uid + '/' + message.key + '/' + file.name;
-    let snapshot = await storage
-      .ref(filePath)
-      .put(file);
+    let snapshot = await storage.ref(filePath).put(file);
 
     let imageUrl = snapshot.downloadURL;
     message.update({
@@ -102,21 +95,18 @@ class App extends Component {
   }
 
   async sendMessage() {
-    let {
-      form,
-      user
-    } = this.state;
+    let { form, user } = this.state;
     if (!this.checkUser()) {
       return;
     }
 
     if (form.text) {
-      await this.messagesRef
-        .push({
-          name: user.displayName,
-          text: form.text,
-          photoUrl: user.photoURL
-        })
+      this.messagesRef.push({
+        name: user.displayName,
+        text: form.text,
+        photoUrl: user.photoURL
+      });
+
       this.setState({
         form: {
           text: ''
@@ -126,59 +116,33 @@ class App extends Component {
   }
 
   render() {
-    let {
-      user,
-      messages,
-      form
-    } = this.state;
+    let { user, messages, form } = this.state;
 
-    return ( <
-      div className = "demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header" >
-      <
-      Navbar user = {
-        user
-      }
-      onSignInPress = {
-        this.onSignInPress
-      }
-      onSignOutPress = {
-        this.onSignOutPress
-      }
-      />
-
-      <
-      main className = "mdl-layout__content mdl-color--grey-100" >
-      <
-      MessagesCardContainer >
-      <
-      MessageList messages = {
-        messages
-      }
-      /> <
-      MessageInputForm text = {
-        form.text
-      }
-      onTextChange = {
-        text => {
-          this.setState({
-            form: {
-              text
-            }
-          });
-        }
-      }
-      onFileSelected = {
-        this.onFileSelected.bind(this)
-      }
-      onSend = {
-        () => this.sendMessage()
-      }
-      /> < /
-      MessagesCardContainer >
-
-      { /*<Snackbar active={} onTimeout={() => {}} />*/ } <
-      /main> < /
-      div >
+    return (
+      <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <Navbar
+          user={user}
+          onSignInPress={this.onSignInPress}
+          onSignOutPress={this.onSignOutPress}
+        />
+        <main className="mdl-layout__content mdl-color--grey-100">
+          <MessagesCardContainer>
+            <MessageList messages={messages} />
+            <MessageInputForm
+              text={form.text}
+              onTextChange={text => {
+                this.setState({
+                  form: {
+                    text
+                  }
+                });
+              }}
+              onFileSelected={this.onFileSelected.bind(this)}
+              onSend={() => this.sendMessage()}
+            />
+          </MessagesCardContainer>
+        </main>
+      </div>
     );
   }
 }
