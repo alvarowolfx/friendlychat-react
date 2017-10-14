@@ -168,6 +168,15 @@ main,
   max-width: 300px;
   max-height: 200px;
 }
+
+.message.bad {
+  color: red;
+}
+
+.message.good {
+  color: green;
+}
+
 #mediaCapture {
   display: none;
 }
